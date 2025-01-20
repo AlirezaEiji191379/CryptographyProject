@@ -1,7 +1,7 @@
 from Cipher.Exceptions.InvalidLengthException import InvalidLengthException
 
 
-class BlockCipher:
+class ProjectBlockCipher:
     def __init__(self):
         pass
 
