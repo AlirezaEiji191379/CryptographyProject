@@ -1,2 +1,4 @@
 def xor_two_bit_strings(string1, string2):
-    return ''.join('1' if b1 != b2 else '0' for b1, b2 in zip(string1, string2))
+    first_string_number = int(string1, 2)
+    second_string_number = int(string2, 2)
+    return str(bin(first_string_number ^ second_string_number)[2:]).zfill(160)
