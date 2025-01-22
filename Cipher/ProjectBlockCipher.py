@@ -19,3 +19,22 @@ class ProjectBlockCipher:
 
         if len(key) > 160:
             raise InvalidLengthException("The length of the key must be less than 160 characters.")
+
+
+
+
+    def __substitution(self, nibble : str):
+        pass
+
+    def __mix_column(self):
+        pass
+
+    def __shift_rows(self):
+        pass
+
+    def __add_gf(self, keybits : str):
+        pass
+
+    def __feistel_function_rounds(self):
+        pass
+
