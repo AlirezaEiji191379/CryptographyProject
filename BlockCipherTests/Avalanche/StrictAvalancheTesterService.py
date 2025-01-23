@@ -1,29 +1,36 @@
+import hashlib
+
 from Cipher.ProjectBlockCipher import ProjectBlockCipher
 from Cipher.Exceptions.InvalidLengthException import InvalidLengthException
-from Utilities.CipherUtilities import xor_two_bit_strings
+from Utilities.CipherUtilities import xor_two_bit_strings, binary_to_hex, text_to_binary, xor_two_hex_strings, \
+    hex_to_binary
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 class StrictAvalancheTesterService:
-    def __init__(self, plain_texts_file_path, key):
+    def __init__(self, plain_texts_file_path, key, cipher_rounds, feistel_rounds):
         self.file_path = plain_texts_file_path
         self.key = ''.join(format(ord(char), '08b') for char in key)
+        self.cipher_round = cipher_rounds
+        self.feistel_round = feistel_rounds
 
-    def do_sac_test(self):
-        cipher = ProjectBlockCipher()
-        plain_texts = self.__read_file_words()
+    def do_sac_test(self, bits_count):
+        cipher = ProjectBlockCipher(self.cipher_round, self.feistel_round)
+        plain_texts = self.__read_file_words(bits_count)
         cipher_texts = []
         plain_texts_count = len(plain_texts)
         for i in range(0, plain_texts_count):
-            cipher_texts.append(cipher.encrypt(plain_texts[i], self.key))
-        sac_matrix = {i: [0] * 160 for i in range(160)}
+            cipher_texts.append(self.__get_cipher_version(cipher, plain_texts[i], self.key))
+        sac_matrix = {i: [0] * bits_count for i in range(bits_count)}
         for plain_text in plain_texts:
-            binary_text = ''.join(format(ord(char), '08b') for char in plain_text)
+            binary_text = plain_text
+            print(binary_text)
             for index in range(0, len(binary_text)):
                 text_version = self.__get_input_version(binary_text, index)
-                cipher_version = cipher.encrypt(text_version, self.key)
-                xored_cipheres = xor_two_bit_strings(cipher_texts[index], cipher_version, 160)
+                print(str(index) + " : "+ text_version)
+                cipher_version = self.__get_cipher_version(cipher, text_version, bits_count)
+                xored_cipheres = xor_two_bit_strings(cipher_texts[index], cipher_version, bits_count)
                 sac_matrix[index] = self._add_cipher_version_to_sac_matrix(sac_matrix[index], xored_cipheres)
         abundance = {}
         for list_value in sac_matrix.values():
@@ -34,17 +41,19 @@ class StrictAvalancheTesterService:
                     abundance[value] = abundance[value] + 1
 
         keys = list(abundance.keys())
-        values = list(abundance.values())
-        x = np.linspace(min(keys), max(keys), 500)
-        y = np.interp(x, keys, values)
-        plt.figure(figsize=(8, 5))
-        plt.plot(x, y, label="نمودار فراوانی", color='blue')
-        plt.scatter(keys, values, color='red', label="داده‌های معیار بهمنی")
-        plt.title("نمودار فراوانی")
-        plt.legend()
-        plt.grid(True)
+        keys.sort()
+        sd = {i: abundance[i] for i in keys}
+        plot_keys = np.array(list(sd.keys()))
+        plot_values = np.array(list(sd.values()))
+        plt.plot(plot_keys, plot_values, label="نمودار فراوانی", color='blue', marker ='o')
         plt.show()
+        return sac_matrix, sd
 
+    def __get_cipher_version(self, cipher, text, bits_count):
+        if bits_count == 160:
+            return cipher.encrypt(text, self.key)
+        final_key = hashlib.sha256(self.key.encode()).hexdigest()
+        return hex_to_binary(cipher.feistel_function(binary_to_hex(text), final_key))
 
     def _add_cipher_version_to_sac_matrix(self, sac_version, cipher_version):
         str_num_list = [int(char) for char in cipher_version]
@@ -59,15 +68,12 @@ class StrictAvalancheTesterService:
         else:
             return '1'
 
-    def __read_file_words(self):
+    def __read_file_words(self, bits_count):
         words = []
         with open(self.file_path, 'r', encoding='ascii') as file:
             for line in file:
                 word = line.strip()
-                if len(word) != 20:
+                if len(word) != (bits_count / 8):
                     raise InvalidLengthException("invalid plain text length")
-                words.append(word)
+                words.append(text_to_binary(word))
         return words
-
-x = StrictAvalancheTesterService("./plaintexts.txt", "123")
-x.do_sac_test()

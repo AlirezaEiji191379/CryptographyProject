@@ -6,12 +6,19 @@ import numpy as np
 
 
 class ProjectBlockCipher:
-    def __init__(self):
+    def __init__(self, block_rounds = None, f_rounds = None):
         self.sbox_dict = {'0' : '3', '1' : '8', '2' : 'f', '3' : '1', '4' : 'a',
                           '5' : '6', '6' : '5', '7' : 'b', '8' : 'e', '9' : 'd',
                           'a' : '4', 'b' : '2', 'c' : '7', 'd' : '0', 'e' : '9', 'f' : 'c'}
-        self.block_cipher_rounds = 32
-        self.f_rounds = 32
+        if block_rounds is None:
+            self.block_cipher_rounds = 32
+        else:
+            self.block_cipher_rounds = block_rounds
+
+        if f_rounds is None:
+            self.f_rounds = 32
+        else:
+            self.f_rounds = f_rounds
 
     def encrypt(self, plain_text : str, key : str, is_enc : bool = True) -> str:
         self.__validate_inputs(plain_text, key)
@@ -20,7 +27,7 @@ class ProjectBlockCipher:
         msb_hex = plain_text_hex[:20]
         lsb_hex = plain_text_hex[20:]
         for i in range(0, self.block_cipher_rounds):
-            feistel_result = self.__feistel_function(lsb_hex, round_keys[i])
+            feistel_result = self.feistel_function(lsb_hex, round_keys[i])
             temp = xor_two_hex_strings(msb_hex, feistel_result, 20)
             msb_hex = lsb_hex
             lsb_hex = temp
@@ -52,7 +59,9 @@ class ProjectBlockCipher:
             round_keys.reverse()
         return round_keys
 
-    def __feistel_function(self, lsb_hex, f_round_key_hex):
+
+
+    def feistel_function(self, lsb_hex, f_round_key_hex):
         input_hex = lsb_hex + f_round_key_hex[0 : 12]
         key_hex = f_round_key_hex[12:] # the total key for the f function that needs key schedule
         all_rounds_keys = self.__feistel_function_key_schedule(key_hex)
