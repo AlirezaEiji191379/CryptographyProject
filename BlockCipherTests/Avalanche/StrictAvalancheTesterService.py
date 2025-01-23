@@ -23,7 +23,7 @@ class StrictAvalancheTesterService:
             for index in range(0, len(binary_text)):
                 text_version = self.__get_input_version(binary_text, index)
                 cipher_version = cipher.encrypt(text_version, self.key)
-                xored_cipheres = xor_two_bit_strings(cipher_texts[index], cipher_version)
+                xored_cipheres = xor_two_bit_strings(cipher_texts[index], cipher_version, 160)
                 sac_matrix[index] = self._add_cipher_version_to_sac_matrix(sac_matrix[index], xored_cipheres)
         abundance = {}
         for list_value in sac_matrix.values():

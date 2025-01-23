@@ -11,13 +11,13 @@ class ModerateAvalancheTesterService:
         blockCipher = ProjectBlockCipher()
         first_cipher_text = blockCipher.encrypt(first_plaintext, key)
         second_cipher_text = blockCipher.encrypt(second_plaintext, key)
-        xored_cipher_texts_str = xor_two_bit_strings(first_cipher_text, second_cipher_text)
+        xored_cipher_texts_str = xor_two_bit_strings(first_cipher_text, second_cipher_text, 160)
         bit_difference = xored_cipher_texts_str.count('1')
         print(str(bit_difference) + "/80")
         return bit_difference
 
 
     def __validate_inputs(self, first_plaintext : str, second_plaintext : str):
-        xored_input_texts_str = xor_two_bit_strings(first_plaintext, second_plaintext)
+        xored_input_texts_str = xor_two_bit_strings(first_plaintext, second_plaintext, 160)
         if xored_input_texts_str.count('1') != 1:
             raise Exception("for avalanche text bit differences must be 1")
