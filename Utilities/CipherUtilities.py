@@ -17,3 +17,6 @@ def hex_to_binary(hex_str):
 
 def binary_to_text(binary_str):
     return ''.join([chr(int(binary_str[i:i+8], 2)) for i in range(0, len(binary_str), 8)])
+
+def text_to_binary(text):
+    return ''.join(format(ord(i), '08b') for i in text)

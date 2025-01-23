@@ -1,5 +1,6 @@
 from Cipher.Exceptions.InvalidLengthException import InvalidLengthException
-from Utilities.CipherUtilities import xor_two_bit_strings, xor_two_hex_strings
+from Utilities.CipherUtilities import xor_two_bit_strings, xor_two_hex_strings, hex_to_binary, binary_to_hex, \
+    binary_to_text, text_to_binary
 import hashlib
 import numpy as np
 
@@ -12,13 +13,27 @@ class ProjectBlockCipher:
         self.block_cipher_rounds = 32
         self.f_rounds = 5
 
-    def encrypt(self, plain_text : str, key : str) -> str:
+    def encrypt(self, plain_text : str, key : str, is_enc : bool = True) -> str:
         self.__validate_inputs(plain_text, key)
-        pass
+        round_keys = self.__cipher_key_scheduling(key, is_enc)
+        plain_text_hex = binary_to_hex(plain_text)
+        msb_hex = plain_text_hex[:20]
+        lsb_hex = plain_text_hex[20:]
+        for i in range(0, self.block_cipher_rounds):
+            feistel_result = self.__feistel_function(lsb_hex, round_keys[i])
+            temp = xor_two_hex_strings(msb_hex, feistel_result, 20)
+            msb_hex = lsb_hex
+            lsb_hex = temp
+        cipher_text_hex = lsb_hex + msb_hex # because in the last round we do not want replacing msb and lsb
+        cipher_text_binary = hex_to_binary(cipher_text_hex)
 
-    def decrypt(self, cipher_text : str, key : str) -> str:
-        self.__validate_inputs(cipher_text, key)
-        pass
+        if is_enc:
+            print("the cipher text is: "+ binary_to_text(cipher_text_binary))
+        else:
+            print("the plain text is: "+ binary_to_text(cipher_text_binary))
+
+        return cipher_text_binary
+
 
     def __validate_inputs(self, text: str, key : str):
         if len(text) > 160:
@@ -31,17 +46,35 @@ class ProjectBlockCipher:
     def __cipher_key_scheduling(self, key : str, is_enc : bool = True):
         round_keys = []
         for i in range(0, self.block_cipher_rounds):
-            round_binary = bin(i)[2:]
+            round_binary = str(bin(i)[2:])
             input_key = round_binary + key
-            sha256_key = hashlib.sha256(input_key.encode()).hexdigest()
+            sha256_key = str(hashlib.sha256(input_key.encode()).hexdigest())
             round_keys.append(sha256_key)
         if is_enc == False:
             round_keys.reverse()
         return round_keys
 
 
-    def __feistel_function_rounds(self, lsb_hex, round_key_hex):
-        pass
+    def __feistel_function(self, lsb_hex, f_round_key_hex):
+        input_hex = lsb_hex + f_round_key_hex[0 : 12]
+        key_hex = f_round_key_hex[12:] # the total key for the f function that needs key schedule
+        all_rounds_keys = self.__feistel_function_key_schedule(key_hex)
+        for i in range(0, self.f_rounds):
+            added_key_hex = self.__add_key(input_hex, all_rounds_keys[i])
+            state_matrix = self.__fill_state_matrix(added_key_hex)
+            shifted_state_matrix = self.__shift_rows(state_matrix)
+            input_hex = self.__mix_column(shifted_state_matrix)
+
+        return input_hex[0:20]
+
+    def __feistel_function_key_schedule(self, key):
+        all_keys = []
+        key_binary = hex_to_binary(key)
+        for i in range(0, self.f_rounds):
+            x = str(bin(i)[2:]) + key_binary
+            sha256_key = str(hashlib.sha256(x.encode()).hexdigest())[0:32]
+            all_keys.append(sha256_key)
+        return all_keys
 
     # this is from s0 sbox of serpent
     def __substitution(self, byte_str : str) -> str:
@@ -75,7 +108,12 @@ class ProjectBlockCipher:
             new_vector.append(str(hex(self.__mul_gf(x, 1) ^ self.__mul_gf(y, 1) ^ self.__mul_gf(z, 2) ^ self.__mul_gf(t, 3)))[2:].zfill(2))
             new_vector.append(str(hex(self.__mul_gf(x, 3) ^ self.__mul_gf(y, 1) ^ self.__mul_gf(z, 1) ^ self.__mul_gf(t, 2)))[2:].zfill(2))
             result_state_matrix.append(new_vector)
-        return np.array(result_state_matrix).T.tolist()
+        result_matrix = np.array(result_state_matrix).tolist()
+        result_text = ""
+        for i in range(0, 4):
+            for j in range(0, 4):
+                result_text += str(result_matrix[i][j])
+        return result_text
 
     def __fill_state_matrix(self, input_text : str):
         if len(input_text) != 32:

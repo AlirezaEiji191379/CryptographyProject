@@ -1,14 +1,12 @@
-import hashlib
-
-import numpy as np
-
 from Cipher.ProjectBlockCipher import ProjectBlockCipher
-from Utilities.CipherUtilities import xor_two_hex_strings
+from Utilities.CipherUtilities import text_to_binary, binary_to_text
 
 x = ProjectBlockCipher()
-
-round_binary = bin(5)[2:]
-input_key = round_binary + "123456789"
-sha256_key = hashlib.sha256(input_key.encode()).hexdigest()
-print(sha256_key)
-print(len(sha256_key))
+text = "ahmadahmadahmadahmad"
+key = "1234567890abcdefghio"
+text_binary = text_to_binary(text)
+key_binary = text_to_binary(key)
+cipher_text = x.encrypt(text_binary, key_binary, True)
+print(binary_to_text(cipher_text))
+plain_text_back = x.encrypt(cipher_text, key_binary, False)
+print(binary_to_text(plain_text_back))
