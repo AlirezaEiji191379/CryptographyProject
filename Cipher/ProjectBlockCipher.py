@@ -34,14 +34,12 @@ class ProjectBlockCipher:
 
         return cipher_text_binary
 
-
     def __validate_inputs(self, text: str, key : str):
         if len(text) > 160:
             raise InvalidLengthException("The length of the text must be less than 160 bits.")
 
         if len(key) != 160:
             raise InvalidLengthException("The length of the key must be 160 bits.")
-
 
     def __cipher_key_scheduling(self, key : str, is_enc : bool = True):
         round_keys = []
@@ -53,7 +51,6 @@ class ProjectBlockCipher:
         if is_enc == False:
             round_keys.reverse()
         return round_keys
-
 
     def __feistel_function(self, lsb_hex, f_round_key_hex):
         input_hex = lsb_hex + f_round_key_hex[0 : 12]
