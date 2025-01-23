@@ -11,7 +11,7 @@ class ProjectBlockCipher:
                           '5' : '6', '6' : '5', '7' : 'b', '8' : 'e', '9' : 'd',
                           'a' : '4', 'b' : '2', 'c' : '7', 'd' : '0', 'e' : '9', 'f' : 'c'}
         self.block_cipher_rounds = 32
-        self.f_rounds = 5
+        self.f_rounds = 32
 
     def encrypt(self, plain_text : str, key : str, is_enc : bool = True) -> str:
         self.__validate_inputs(plain_text, key)
@@ -82,7 +82,7 @@ class ProjectBlockCipher:
             temp = xor_two_hex_strings(msb_nibble, sbox_result, 2)
             msb_nibble = lsb_nibble
             lsb_nibble = temp
-        return msb_nibble + lsb_nibble
+        return lsb_nibble + msb_nibble # the last round should be flipped
 
     # this is exactly the rijndeal shift rows
     def __shift_rows(self, state_matrix : list) -> list:
