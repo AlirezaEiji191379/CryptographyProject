@@ -16,9 +16,13 @@ def ofb_mode(plain_texts, key):
     return cipher_text
 
 
-plain_texts = ["yurUQp2gnwLvMdEVGJ5q",
-               "LePfGA5xhjHUS2Vv4KMm",
+plain_texts = ["Uhc28WAdBn6tRe4r7uTV",
+               "s2v74TSQadcpK6YX8Reg",
                "Q82YEPZxJbSCrHDwqpWy",
                "eMk3nqTm96EzZKaNCfSh",
-               "WPxG2Nv7RYhjQ4Dub8VS"]
+               "WPxG2Nv7RYhjQ4Dub8VS",
+               "q2WcXHz4FAxCULevEmKB",
+               "DkJuANyrZ2Vs4Ccbx6HW",
+               "dc8ya9GwbjDLe3gQNU4k",
+               "vGthKJCsAnVP4Tu3jZcy"]
 print(ofb_mode(plain_texts, "12345678900987654321"))
