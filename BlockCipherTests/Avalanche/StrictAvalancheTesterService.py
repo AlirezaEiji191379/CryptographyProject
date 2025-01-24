@@ -34,7 +34,7 @@ class StrictAvalancheTesterService:
                 else:
                     plain_text = text_to_binary(word)
 
-                cipher_text = self.__get_cipher_version(cipher, plain_text, self.key)
+                cipher_text = self.__get_cipher_version(cipher, plain_text, self.block_cipher_size)
                 for index in range(0, len(plain_text)):
                     text_version = self.__get_input_version(plain_text, index)
                     cipher_version = self.__get_cipher_version(cipher, text_version, self.block_cipher_size)
@@ -82,9 +82,8 @@ class StrictAvalancheTesterService:
 
     def __get_cipher_version(self, cipher, text, bits_count):
         if bits_count == 160:
-            return cipher.encrypt(text, self.key)
+            return cipher.encrypt(text, self.key, True)
         input_text = binary_to_hex(text)
-        assert len(input_text) == int(self.block_cipher_size / 4)
         return hex_to_binary(cipher.feistel_function(input_text, self.key))
 
     def _add_cipher_version_to_sac_matrix(self, sac_version, cipher_version):

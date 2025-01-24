@@ -11,12 +11,12 @@ class ProjectBlockCipher:
                           '5': '6', '6': '5', '7': 'b', '8': 'e', '9': 'd',
                           'a': '4', 'b': '2', 'c': '7', 'd': '0', 'e': '9', 'f': 'c'}
         if block_rounds is None:
-            self.block_cipher_rounds = 32
+            self.block_cipher_rounds = 16
         else:
             self.block_cipher_rounds = block_rounds
 
         if f_rounds is None:
-            self.f_rounds = 32
+            self.f_rounds = 15
         else:
             self.f_rounds = f_rounds
 
@@ -34,12 +34,6 @@ class ProjectBlockCipher:
             lsb_hex = temp
         cipher_text_hex = lsb_hex + msb_hex  # because in the last round we do not want replacing msb and lsb
         cipher_text_binary = hex_to_binary(cipher_text_hex)
-
-        if is_enc:
-            print("the cipher text is: " + binary_to_text(cipher_text_binary))
-        else:
-            print("the plain text is: " + binary_to_text(cipher_text_binary))
-
         return cipher_text_binary
 
     def __validate_inputs(self, text: str, key: str):
