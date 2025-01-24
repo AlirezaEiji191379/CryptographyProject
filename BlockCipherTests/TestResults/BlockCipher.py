@@ -8,5 +8,4 @@ def plain_text_sac_avalanche_tests_for_block_cipher(key):
     print(abudance)
 
 
-
 plain_text_sac_avalanche_tests_for_block_cipher("alirezaeijialirezaei")
