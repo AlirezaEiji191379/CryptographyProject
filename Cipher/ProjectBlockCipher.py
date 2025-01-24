@@ -11,12 +11,12 @@ class ProjectBlockCipher:
                           '5': '6', '6': '5', '7': 'b', '8': 'e', '9': 'd',
                           'a': '4', 'b': '2', 'c': '7', 'd': '0', 'e': '9', 'f': 'c'}
         if block_rounds is None:
-            self.block_cipher_rounds = 16
+            self.block_cipher_rounds = 9
         else:
             self.block_cipher_rounds = block_rounds
 
         if f_rounds is None:
-            self.f_rounds = 15
+            self.f_rounds = 6
         else:
             self.f_rounds = f_rounds
 
