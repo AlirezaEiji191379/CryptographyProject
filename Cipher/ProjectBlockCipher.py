@@ -134,7 +134,13 @@ class ProjectBlockCipher:
     def __add_key(self, input_hex: str, keyhex: str):
         if len(input_hex) != 32 and len(keyhex) != 32:
             raise InvalidLengthException("The length of the input hex and key must be 128 bits.")
-        return xor_two_hex_strings(input_hex, keyhex, 32)
+        result_added_key_hex = ''
+        for i in range(0, 32, 2):
+            first_num = int(input_hex[i] + input_hex[i + 1], 16)
+            second_num = int(keyhex[i] + keyhex[i + 1], 16)
+            result = (first_num + second_num) % 256
+            result_added_key_hex = result_added_key_hex + binary_to_hex(str(bin(result)[2:].zfill(8)))
+        return result_added_key_hex
 
     def __mul_gf(self, a, b):
         if b == 1:
