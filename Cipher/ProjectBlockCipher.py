@@ -53,6 +53,11 @@ class ProjectBlockCipher:
     def encrypt(self, plain_text: str, key: str, is_enc: bool = True) -> str:
         self.__validate_inputs(plain_text, key)
         round_keys = self.__cipher_key_scheduling(key, is_enc)
+        
+
+        #xor whitening key
+        plain_text =  self.__cipher_key_whitening(key,plain_text)
+
         plain_text_hex = binary_to_hex(plain_text)
         msb_hex = plain_text_hex[:20]
         lsb_hex = plain_text_hex[20:]
@@ -64,6 +69,7 @@ class ProjectBlockCipher:
             lsb_hex = temp
         cipher_text_hex = lsb_hex + msb_hex  # because in the last round we do not want replacing msb and lsb
         cipher_text_binary = hex_to_binary(cipher_text_hex)
+        cipher_text_binary = self.__cipher_key_whitening(key,cipher_text_binary)
         return cipher_text_binary
 
     def __validate_inputs(self, text: str, key: str):
@@ -73,9 +79,21 @@ class ProjectBlockCipher:
         if len(key) != 160:
             raise InvalidLengthException("The length of the key must be 160 bits.")
 
+    def __cipher_key_whitening(self, key: str,plain_text_bin: str):
+        #xor_two_bit_strings(hashlib.sha256(input_key.encode()).hexdigest(),plain_text_hex,160)
+        round_binary = str(bin(0))
+        input_key = round_binary + key
+        sha256_key = (hashlib.sha256(input_key.encode()).hexdigest())
+        sha256_key1 = hex_to_binary(sha256_key)[:160]
+        # print(len(sha256_key1))
+        # print(len(plain_text_bin))
+        whitened = xor_two_bit_strings(plain_text_bin,sha256_key1,160)
+
+        return whitened
+
     def __cipher_key_scheduling(self, key: str, is_enc: bool = True):
         round_keys = []
-        for i in range(0, self.block_cipher_rounds):
+        for i in range(1, self.block_cipher_rounds+1):
             round_binary = str(bin(i)[2:])
             input_key = round_binary + key
             sha256_key = str(hashlib.sha256(input_key.encode()).hexdigest())
@@ -149,7 +167,7 @@ class ProjectBlockCipher:
         # return lsb_nibble + msb_nibble  # the last round should be flipped
         return self.sbox_dict[byte_str]
 
-    # this is exactly the rijndeal shift rows
+    # this is the rijndeal shift rows differed
     def __shift_rows(self, state_matrix: list) -> list:
         for i in range(3,0,-1):
             state_matrix[3-i] = state_matrix[3-i][i:] + state_matrix[3-i][:i] # 1st row: 1, 2nd: 2, 3rd:3 4rd: 0
