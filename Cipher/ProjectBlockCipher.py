@@ -141,7 +141,7 @@ class ProjectBlockCipher:
             S[i] = binary_to_hex(str(bin(S[i]))[2:].zfill(32))
 
         result_sub_keys = []
-        for i in range(0, 24, 4):
+        for i in range(0, self.f_rounds * 4, 4):
             result_sub_keys.append(S[i] + S[i + 1] + S[i + 2] + S[i + 3])
 
         return result_sub_keys[0:self.f_rounds]
