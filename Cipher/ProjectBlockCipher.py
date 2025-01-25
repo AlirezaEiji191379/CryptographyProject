@@ -7,9 +7,39 @@ import numpy as np
 
 class ProjectBlockCipher:
     def __init__(self, block_rounds=None, f_rounds=None):
-        self.sbox_dict = {'0': '3', '1': '8', '2': 'f', '3': '1', '4': 'a',
-                          '5': '6', '6': '5', '7': 'b', '8': 'e', '9': 'd',
-                          'a': '4', 'b': '2', 'c': '7', 'd': '0', 'e': '9', 'f': 'c'}
+        self.sbox_dict = {
+    "00": "70", "01": "82", "02": "2c", "03": "ec", "04": "b3", "05": "27", "06": "c0", "07": "e5",
+    "08": "e4", "09": "85", "0a": "57", "0b": "35", "0c": "ea", "0d": "0c", "0e": "ae", "0f": "41",
+    "10": "23", "11": "ef", "12": "6b", "13": "93", "14": "45", "15": "19", "16": "a5", "17": "21",
+    "18": "ed", "19": "0e", "1a": "4f", "1b": "4e", "1c": "1d", "1d": "65", "1e": "92", "1f": "bd",
+    "20": "86", "21": "b8", "22": "af", "23": "8f", "24": "7c", "25": "eb", "26": "1f", "27": "ce",
+    "28": "3e", "29": "30", "2a": "dc", "2b": "5f", "2c": "5e", "2d": "c5", "2e": "0b", "2f": "1a",
+    "30": "a6", "31": "e1", "32": "39", "33": "ca", "34": "d5", "35": "47", "36": "5d", "37": "3d",
+    "38": "d9", "39": "01", "3a": "5a", "3b": "d6", "3c": "51", "3d": "56", "3e": "6c", "3f": "4d",
+    "40": "8b", "41": "0d", "42": "9a", "43": "66", "44": "fb", "45": "cc", "46": "b0", "47": "2d",
+    "48": "74", "49": "12", "4a": "2b", "4b": "20", "4c": "f0", "4d": "b1", "4e": "84", "4f": "99",
+    "50": "df", "51": "4c", "52": "cb", "53": "c2", "54": "34", "55": "7e", "56": "76", "57": "05",
+    "58": "6d", "59": "b7", "5a": "a9", "5b": "31", "5c": "d1", "5d": "17", "5e": "04", "5f": "d7",
+    "60": "14", "61": "58", "62": "3a", "63": "61", "64": "de", "65": "1b", "66": "11", "67": "1c",
+    "68": "32", "69": "0f", "6a": "9c", "6b": "16", "6c": "53", "6d": "18", "6e": "f2", "6f": "22",
+    "70": "fe", "71": "44", "72": "cf", "73": "b2", "74": "c3", "75": "b5", "76": "7a", "77": "91",
+    "78": "24", "79": "08", "7a": "e8", "7b": "a8", "7c": "60", "7d": "fc", "7e": "69", "7f": "50",
+    "80": "aa", "81": "d0", "82": "a0", "83": "7d", "84": "a1", "85": "89", "86": "62", "87": "97",
+    "88": "54", "89": "5b", "8a": "1e", "8b": "95", "8c": "e0", "8d": "ff", "8e": "64", "8f": "d2",
+    "90": "10", "91": "c4", "92": "00", "93": "48", "94": "a3", "95": "f7", "96": "75", "97": "db",
+    "98": "8a", "99": "03", "9a": "e6", "9b": "da", "9c": "09", "9d": "3f", "9e": "dd", "9f": "94",
+    "a0": "87", "a1": "5c", "a2": "83", "a3": "02", "a4": "cd", "a5": "4a", "a6": "90", "a7": "33",
+    "a8": "73", "a9": "67", "aa": "f6", "ab": "f3", "ac": "9d", "ad": "7f", "ae": "bf", "af": "e2",
+    "b0": "52", "b1": "9b", "b2": "d8", "b3": "26", "b4": "c8", "b5": "37", "b6": "c6", "b7": "3b",
+    "b8": "81", "b9": "96", "ba": "6f", "bb": "4b", "bc": "13", "bd": "be", "be": "63", "bf": "2e",
+    "c0": "e9", "c1": "79", "c2": "a7", "c3": "8c", "c4": "9f", "c5": "6e", "c6": "bc", "c7": "8e",
+    "c8": "29", "c9": "f5", "ca": "f9", "cb": "b6", "cc": "2f", "cd": "fd", "ce": "b4", "cf": "59",
+    "d0": "78", "d1": "98", "d2": "06", "d3": "6a", "d4": "e7", "d5": "46", "d6": "71", "d7": "ba",
+    "d8": "d4", "d9": "25", "da": "ab", "db": "42", "dc": "88", "dd": "a2", "de": "8d", "df": "fa",
+    "e0": "72", "e1": "07", "e2": "b9", "e3": "55", "e4": "f8", "e5": "ee", "e6": "ac", "e7": "0a",
+    "e8": "36", "e9": "49", "ea": "2a", "eb": "68", "ec": "3c", "ed": "38", "ee": "f1", "ef": "a4",
+    "f0": "40", "f1": "28", "f2": "d3", "f3": "7b", "f4": "bb", "f5": "c9", "f6": "43", "f7": "c1",
+    "f8": "15", "f9": "e3", "fa": "ad", "fb": "f4", "fc": "77", "fd": "c7", "fe": "80", "ff": "9e"}
         if block_rounds is None:
             self.block_cipher_rounds = 9
         else:
@@ -109,14 +139,15 @@ class ProjectBlockCipher:
 
     # this is from s0 sbox of serpent
     def __substitution(self, byte_str: str) -> str:
-        msb_nibble = byte_str[0]  # left side
-        lsb_nibble = byte_str[1]  # right side
-        for i in range(0, 3):
-            sbox_result = self.sbox_dict[lsb_nibble]
-            temp = xor_two_hex_strings(msb_nibble, sbox_result, 1)
-            msb_nibble = lsb_nibble
-            lsb_nibble = temp
-        return lsb_nibble + msb_nibble  # the last round should be flipped
+        # msb_nibble = byte_str[0]  # left side
+        # lsb_nibble = byte_str[1]  # right side
+        # for i in range(0, 3):
+        #     sbox_result = self.sbox_dict[lsb_nibble]
+        #     temp = xor_two_hex_strings(msb_nibble, sbox_result, 1)
+        #     msb_nibble = lsb_nibble
+        #     lsb_nibble = temp
+        # return lsb_nibble + msb_nibble  # the last round should be flipped
+        return self.sbox_dict[byte_str]
 
     # this is exactly the rijndeal shift rows
     def __shift_rows(self, state_matrix: list) -> list:
