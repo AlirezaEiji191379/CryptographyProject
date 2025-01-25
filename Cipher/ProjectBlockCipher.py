@@ -68,13 +68,44 @@ class ProjectBlockCipher:
         return input_hex
 
     def __feistel_function_key_schedule(self, key):
-        all_keys = []
-        key_binary = hex_to_binary(key)
-        for i in range(0, self.f_rounds):
-            x = str(bin(i)[2:]) + key_binary
-            sha256_key = str(hashlib.sha256(x.encode()).hexdigest())[0:32]
-            all_keys.append(sha256_key)
-        return all_keys
+        r = 20
+        b = len(key) // 4
+        c = (r + 1) * 2
+        S = [0] * c
+        P = 0xB7E15163
+        Q = 0x9E3779B9
+        S[0] = P
+        for i in range(1, c):
+            S[i] = (S[i - 1] + Q) & 0xFFFFFFFF
+        T = [0] * (b)
+        for i in range(b):
+            T[i] = int(hex_to_binary(key[i * 4:(i + 1) * 4]), 2)
+        i = 0
+        j = 0
+        A = B = 0
+        for k in range(3 * max(b, c)):
+            A = S[i] = (S[i] + A + B) & 0xFFFFFFFF
+            B = T[j] = (T[j] + A + B) & 0xFFFFFFFF
+            i = (i + 1) % c
+            j = (j + 1) % b
+
+        for i in range(0, len(S)):
+            S[i] = binary_to_hex(str(bin(S[i]))[2:].zfill(32))
+
+        result_sub_keys = []
+        for i in range(0, 24, 4):
+            result_sub_keys.append(S[i] + S[i + 1] + S[i + 2] + S[i + 3])
+
+        return result_sub_keys[0:self.f_rounds]
+
+    # def __feistel_function_key_schedule(self, key):
+    #     all_keys = []
+    #     key_binary = hex_to_binary(key)
+    #     for i in range(0, self.f_rounds):
+    #         x = str(bin(i)[2:]) + key_binary
+    #         sha256_key = str(hashlib.sha256(x.encode()).hexdigest())[0:32]
+    #         all_keys.append(sha256_key)
+    #     return all_keys
 
     # this is from s0 sbox of serpent
     def __substitution(self, byte_str: str) -> str:
