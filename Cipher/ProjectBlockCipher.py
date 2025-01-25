@@ -46,7 +46,7 @@ class ProjectBlockCipher:
             self.block_cipher_rounds = block_rounds
 
         if f_rounds is None:
-            self.f_rounds = 6
+            self.f_rounds = 8
         else:
             self.f_rounds = f_rounds
 
