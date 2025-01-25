@@ -89,8 +89,8 @@ class ProjectBlockCipher:
 
     # this is exactly the rijndeal shift rows
     def __shift_rows(self, state_matrix: list) -> list:
-        for i in range(3,-1,-1):
-            state_matrix[3-i] = state_matrix[3-i][i:] + state_matrix[3-i][:i] # 1,2,3,0
+        for i in range(3,0,-1):
+            state_matrix[3-i] = state_matrix[3-i][i:] + state_matrix[3-i][:i] # 1st row: 1, 2nd: 2, 3rd:3 4rd: 0
         return state_matrix
 
     # this is exactly the rijndeal mix columns
