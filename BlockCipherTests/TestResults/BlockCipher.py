@@ -2,7 +2,7 @@ from BlockCipherTests.Avalanche.StrictAvalancheTesterService import StrictAvalan
 
 
 def plain_text_sac_avalanche_tests_for_block_cipher(key):
-    sac_tester_service = StrictAvalancheTesterService("../Avalanche/plaintexts.txt", key, 9, 6, 160)
+    sac_tester_service = StrictAvalancheTesterService("../Avalanche/plaintexts.txt", key, 9, 8, 160)
     sac_matrix, abudance = sac_tester_service.do_sac_test()
     print(sac_matrix)
     print(abudance)

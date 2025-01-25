@@ -5,7 +5,7 @@ from Utilities.CipherUtilities import generate_iv, xor_two_bit_strings, text_to_
 def ofb_mode(plain_texts, key):
     key = text_to_binary(key)
     iv = generate_iv(160)
-    cipher = ProjectBlockCipher()
+    cipher = ProjectBlockCipher(9, 8)
     input_text = iv
     cipher_text = ''
     for plain_text in plain_texts:
@@ -24,5 +24,6 @@ plain_texts = ["Uhc28WAdBn6tRe4r7uTV",
                "q2WcXHz4FAxCULevEmKB",
                "DkJuANyrZ2Vs4Ccbx6HW",
                "dc8ya9GwbjDLe3gQNU4k",
-               "vGthKJCsAnVP4Tu3jZcy"]
+               "vGthKJCsAnVP4Tu3jZcy",
+               "y_lAtKj:8H[Z7$NLsS*E"]
 print(ofb_mode(plain_texts, "12345678900987654321"))
