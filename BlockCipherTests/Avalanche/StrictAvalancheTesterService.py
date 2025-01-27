@@ -1,7 +1,7 @@
 import hashlib
 
-from Cipher.ProjectBlockCipher import ProjectBlockCipher
-from Cipher.Exceptions.InvalidLengthException import InvalidLengthException
+from Ciphers.ProjectBlockCipher import ProjectBlockCipher
+from Ciphers.Exceptions.InvalidLengthException import InvalidLengthException
 from Utilities.CipherUtilities import xor_two_bit_strings, binary_to_hex, text_to_binary, xor_two_hex_strings, \
     hex_to_binary
 import matplotlib.pyplot as plt

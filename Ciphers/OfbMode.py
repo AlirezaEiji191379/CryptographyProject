@@ -1,4 +1,4 @@
-from Cipher.ProjectBlockCipher import ProjectBlockCipher
+from Ciphers.ProjectBlockCipher import ProjectBlockCipher
 from Utilities.CipherUtilities import generate_iv, xor_two_bit_strings, text_to_binary
 
 

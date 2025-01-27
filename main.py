@@ -1,4 +1,4 @@
-from Cipher.ProjectBlockCipher import ProjectBlockCipher
+from Ciphers.ProjectBlockCipher import ProjectBlockCipher
 from Utilities.CipherUtilities import text_to_binary, binary_to_hex, binary_to_text, hex_to_binary
 import argparse
 

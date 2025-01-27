@@ -1,4 +1,4 @@
-from Cipher.Exceptions.InvalidLengthException import InvalidLengthException
+from Ciphers.Exceptions.InvalidLengthException import InvalidLengthException
 from Utilities.CipherUtilities import xor_two_bit_strings, xor_two_hex_strings, hex_to_binary, binary_to_hex, \
     binary_to_text, text_to_binary
 import hashlib
